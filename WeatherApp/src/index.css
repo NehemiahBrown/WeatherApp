@@ -2,8 +2,14 @@
 
 :root {
   --body-font: "Roboto", sans-serif;
+  --card-background: rgba(255, 255, 255, 0.08);
 
-  --border: rgba(255, 255, 255, 0.06);
+  --primary-color: #302c1e;
+  --secondary-color: #a3a6a2;
+  --text-color: #c6c7bd;
+  --background-color: #3a3d3a;
+
+  --border: rgba(255,255,255, 0.22);
   --border-hover: rgba(255, 255, 255, 0.12);
 
   --text-primary: #f5f5f7;
@@ -19,10 +25,11 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
 }
 
 body {
-  background: linear-gradient(135deg, #060608 0%, #0b0b0f 40%, #111118 100%);
+  background-image: url("./assets/backgroundImage.avif");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -32,8 +39,7 @@ body {
 }
 
 .dashboard {
-  background-image: url("./assets/backgroundImage.jpg");
-  background-size: cover;
+  border: solid 5px white;
 }
 
 .heading-font {
