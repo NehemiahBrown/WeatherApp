@@ -10,6 +10,7 @@ export default function MainPage() {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [inputLocationName, setInputLocationName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
   const DEFAULT_LOCATION = {
     latitude: 37.71639, 
     longitude: -89.208664, 
@@ -77,12 +78,15 @@ fetchCurrentWeatherData(
     getLocationNames();
   }, [inputLocationName]);
 
+  useEffect(() => {
+
+  })
 
   return (
-    <main className="flex justify-center items-center min-h-screen">
-      <div className="grid grid-cols-[1.2fr_1.8fr] gap-4 dashboard h-[80vh] w-[92%] bg-background-image text-[var(--text-primary)] rounded-xl p-6">
-        <div className="flex flex-col gap-6 h-full text-[var(--text-color)] rounded-md">
-            <form action="GET">
+    <main className="flex justify-center py-4 items-center min-h-screen">
+      <div className="grid md:grid-cols-[1.2fr_1.8fr] gap-4 dashboard min-h-[80vh] w-[92%] bg-background-image text-[var(--text-primary)] rounded-xl p-6">
+        <div className="relative flex flex-col gap-6 h-full text-[var(--text-color)] rounded-md">
+            <form className="" action="GET">
               <input
                 onChange={handleInputChange}
                 type="text"
@@ -92,7 +96,7 @@ fetchCurrentWeatherData(
             </form>
             <TodaysWeatherCard currentWeatherData={currentWeatherData}/>
             {searchResults.length > 1 && (
-              <div className="absolute bg-[var(--text-primary)] mt-6 rounded-md p-2">
+              <div className="absolute bg-[var(--text-primary)] mt-10 w-full rounded-md p-2">
                 {searchResults.map((result) => (
                   <p
                   onClick={() => fetchCurrentWeatherData(result.latitude, result.longitude)}

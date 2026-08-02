@@ -3,6 +3,7 @@
 :root {
   --body-font: "Roboto", sans-serif;
   --card-background: rgba(255, 255, 255, 0.08);
+  --subCard-background: rgba(23,24,29,0.7);
 
   --primary-color: #302c1e;
   --secondary-color: #a3a6a2;
