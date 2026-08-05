@@ -1,123 +1,219 @@
 import { useEffect, useState } from "react";
 
-import TodaysWeatherCard from "../components/TodaysWeatherCard.jsx"
-import HourlyForecast from "../components/HourlyForecast.jsx"
-import SevenDayForecast from "../components/SevenDayForecast.jsx"
-
-
+import TodaysWeatherCard from "../components/TodaysWeatherCard.jsx";
+import HourlyForecast from "../components/HourlyForecast.jsx";
+import SevenDayForecast from "../components/SevenDayForecast.jsx";
 
 export default function MainPage() {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
+  const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
   const [inputLocationName, setInputLocationName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   const DEFAULT_LOCATION = {
-    latitude: 37.71639, 
-    longitude: -89.208664, 
-  }
-  // getting forecast api for fetching forecast data & geo api for translating city names into coordinates
-
-  const geoApi = `https://geocoding-api.open-meteo.com/v1/search?name=${inputLocationName}&count=10&language=en&format=json`;
-
-  const handleInputChange = (e) => {
-    setInputLocationName(e.target.value);
+    latitude: 37.71639,
+    longitude: -89.208664,
   };
 
-  
-    const fetchCurrentWeatherData = async (latitude, longitude) => {
-      try {
-        const forecastApi =
-     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,showers_sum,snowfall_sum,precipitation_probability_max&hourly=temperature_2m,rain,snowfall,showers,relative_humidity_2m,visibility&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,is_day,apparent_temperature,precipitation,rain,showers,snowfall,relative_humidity_2m&timezone=GMT&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`;
-        const response = await fetch(forecastApi);
-        const data = await response.json();
+  const geoApi =
+    `https://geocoding-api.open-meteo.com/v1/search` +
+    `?name=${inputLocationName}` +
+    `&count=10` +
+    `&language=en` +
+    `&format=json`;
 
-        const currentWeather = {
-            temperature: data?.current?.temperature_2m,
-            feelsLike: data?.current?.apparent_temperature,
-            precipitation: data?.current?.precipitation,
-            rain: data?.current?.rain,
-            snow: data?.current?.snowfall,
-            dayOrNight: data?.current?.is_day,
-            windSpeed: data?.current?.wind_speed_10m,
-            humidity: data?.current?.relative_humidity_2m,
-            weather: data?.current?.weather_code,
-        }
+  function handleInputChange(event) {
+    setInputLocationName(event.target.value);
+  }
 
-        setCurrentWeatherData(currentWeather);
-        setSearchResults([])
-      } catch (e) {
-        console.log("Error fetching data: ", e.message);
+  async function fetchCurrentWeatherData(latitude, longitude) {
+    try {
+      const forecastApi =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${latitude}` +
+        `&longitude=${longitude}` +
+        `&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,is_day,apparent_temperature,precipitation,rain,showers,snowfall` +
+        `&timezone=auto` +
+        `&wind_speed_unit=mph` +
+        `&temperature_unit=fahrenheit` +
+        `&precipitation_unit=inch`;
+
+      const response = await fetch(forecastApi);
+
+      if (!response.ok) {
+        throw new Error(`Current-weather request failed: ${response.status}`);
       }
-    };
- 
-    useEffect(() =>{
-fetchCurrentWeatherData(
-  DEFAULT_LOCATION.latitude,
-  DEFAULT_LOCATION.longitude
-)
-    }, [])
+
+      const data = await response.json();
+
+      const currentWeather = {
+        temperature: data?.current?.temperature_2m,
+        feelsLike: data?.current?.apparent_temperature,
+        precipitation: data?.current?.precipitation,
+        rain: data?.current?.rain,
+        snow: data?.current?.snowfall,
+        dayOrNight: data?.current?.is_day,
+        windSpeed: data?.current?.wind_speed_10m,
+        humidity: data?.current?.relative_humidity_2m,
+        weather: data?.current?.weather_code,
+      };
+
+      setCurrentWeatherData(currentWeather);
+      setSearchResults([]);
+    } catch (error) {
+      console.log("Error fetching current weather:", error.message);
+    }
+  }
+
+  async function fetchHourlyData(latitude, longitude) {
+    try {
+      const forecastApi =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${latitude}` +
+        `&longitude=${longitude}` +
+        `&hourly=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,rain,snowfall,precipitation,precipitation_probability,snow_depth` +
+        `&timezone=auto` +
+        `&temperature_unit=fahrenheit` +
+        `&precipitation_unit=inch`;
+
+      const response = await fetch(forecastApi);
+
+      if (!response.ok) {
+        throw new Error(`Hourly-weather request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const hourlyWeatherArray = data.hourly.time
+        .map((time, index) => {
+          const givenTime = new Date(time);
+
+          const timeFormatted = givenTime.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            hour12: true,
+          });
+
+          const cleanTime = timeFormatted
+            .replace(/\s+/g, "")
+            .toLowerCase();
+
+          return {
+            id: time,
+            rawTime: time,
+            time: cleanTime,
+            temperature: data?.hourly?.temperature_2m[index],
+            feelsLike: data?.hourly?.apparent_temperature[index],
+            rain: data?.hourly?.rain[index],
+            snow: data?.hourly?.snowfall[index],
+            snowDepth: data?.hourly?.snow_depth[index],
+            humidity: data?.hourly?.relative_humidity_2m[index],
+            weather: data?.hourly?.weather_code[index],
+            precipitation: data?.hourly?.precipitation[index],
+            precipitationProbability:
+              data?.hourly?.precipitation_probability[index],
+          };
+        })
+        .slice(0, 24);
+
+      setHourlyWeatherData(hourlyWeatherArray);
+      setSearchResults([]);
+    } catch (error) {
+      console.log("Error fetching hourly weather:", error.message);
+    }
+  }
+
+  function handleLocationSelection(latitude, longitude) {
+    fetchCurrentWeatherData(latitude, longitude);
+    fetchHourlyData(latitude, longitude);
+    setInputLocationName("");
+  }
 
   useEffect(() => {
-    console.log(currentWeatherData)
-  }, [currentWeatherData])
+    fetchCurrentWeatherData(
+      DEFAULT_LOCATION.latitude,
+      DEFAULT_LOCATION.longitude,
+    );
+
+    fetchHourlyData(
+      DEFAULT_LOCATION.latitude,
+      DEFAULT_LOCATION.longitude,
+    );
+  }, []);
 
   useEffect(() => {
     if (inputLocationName.trim().length < 2) {
       setSearchResults([]);
       return;
     }
-    const getLocationNames = async () => {
+
+    const controller = new AbortController();
+
+    async function getLocationNames() {
       try {
-        const response = await fetch(geoApi);
+        const response = await fetch(geoApi, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Location request failed: ${response.status}`);
+        }
+
         const data = await response.json();
         setSearchResults(data.results ?? []);
-      } catch (e) {
-        console.log("Error fetching data: ", e.message);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.log("Error fetching locations:", error.message);
+        }
       }
-    };
+    }
+
     getLocationNames();
-  }, [inputLocationName]);
 
-  useEffect(() => {
-
-  })
+    return () => controller.abort();
+  }, [inputLocationName, geoApi]);
 
   return (
-    <main className="flex justify-center py-4 items-center min-h-screen">
-      <div className="grid md:grid-cols-[1.2fr_1.8fr] gap-4 dashboard min-h-[80vh] w-[92%] bg-background-image text-[var(--text-primary)] rounded-xl p-6">
-        <div className="relative flex flex-col gap-6 h-full text-[var(--text-color)] rounded-md">
-            <form className="" action="GET">
-              <input
-                onChange={handleInputChange}
-                type="text"
-                className="bg-[var(--background-color)] w-full h-8 px-3 rounded-xl"
-                placeholder="Search a city..."
-              />
-            </form>
-            <TodaysWeatherCard currentWeatherData={currentWeatherData}/>
-            {searchResults.length > 1 && (
-              <div className="absolute bg-[var(--text-primary)] mt-10 w-full rounded-md p-2">
-                {searchResults.map((result) => (
-                  <p
-                  onClick={() => fetchCurrentWeatherData(result.latitude, result.longitude)}
-                    key={`${result.latitude} + ${result.longitude}`}
-                    className="text-black text-lg py-1 "
-                  >
-                    {result.name}, {result.admin1}
-                  </p>
-                ))}
-              </div>
-            )}  
+    <main className="flex min-h-screen items-center justify-center py-4">
+      <div className="dashboard grid min-h-[80vh] w-[92%] gap-4 rounded-xl bg-background-image p-6 text-[var(--text-primary)] lg:grid-cols-[1.2fr_1.8fr]">
+        <div className="relative flex h-full flex-col gap-6 rounded-md text-[var(--text-color)]">
+          <form onSubmit={(event) => event.preventDefault()}>
+            <input
+              value={inputLocationName}
+              onChange={handleInputChange}
+              type="text"
+              className="h-8 w-full rounded-xl bg-[var(--background-color)] px-3"
+              placeholder="Search a city..."
+            />
+          </form>
+
+          <TodaysWeatherCard currentWeatherData={currentWeatherData} />
+
+          {searchResults.length > 0 && (
+            <div className="absolute top-10 z-20 w-full rounded-md bg-[var(--text-primary)] p-2">
+              {searchResults.map((result) => (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleLocationSelection(
+                      result.latitude,
+                      result.longitude,
+                    )
+                  }
+                  key={`${result.latitude}-${result.longitude}`}
+                  className="block w-full py-1 text-left text-lg text-black"
+                >
+                  {result.name}
+                  {result.admin1 ? `, ${result.admin1}` : ""}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        
-          <div>
-            <div>
-              <HourlyForecast/>
-            </div>
-            <div>
-              <SevenDayForecast/>
-            </div>
-          </div>
+
+        <div className="flex flex-col gap-4">
+          <HourlyForecast hourlyWeatherData={hourlyWeatherData} />
+          <SevenDayForecast />
+        </div>
       </div>
     </main>
   );
