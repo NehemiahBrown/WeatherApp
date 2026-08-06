@@ -94,9 +94,7 @@ export default function MainPage() {
             hour12: true,
           });
 
-          const cleanTime = timeFormatted
-            .replace(/\s+/g, "")
-            .toLowerCase();
+          const cleanTime = timeFormatted.replace(/\s+/g, "").toLowerCase();
 
           return {
             id: time,
@@ -110,7 +108,8 @@ export default function MainPage() {
             humidity: data?.hourly?.relative_humidity_2m[index],
             weather: data?.hourly?.weather_code[index],
             precipitation: data?.hourly?.precipitation[index],
-            precipitationProbability: data?.hourly?.precipitation_probability[index],
+            precipitationProbability:
+              data?.hourly?.precipitation_probability[index],
           };
         })
         .slice(0, 24);
@@ -125,14 +124,14 @@ export default function MainPage() {
   async function fetchDailyWeatherData(latitude, longitude) {
     try {
       const forecastApi =
-      `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${latitude}` +
-      `&longitude=${longitude}`+
-      `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum,precipitation_hours,precipitation_sum,precipitation_probability_max` +
-      `&timezone=auto`+
-      `&wind_speed_unit=mph`+
-      `&temperature_unit=fahrenheit`+
-      `&precipitation_unit=inch`
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${latitude}` +
+        `&longitude=${longitude}` +
+        `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum,precipitation_hours,precipitation_sum,precipitation_probability_max` +
+        `&timezone=auto` +
+        `&wind_speed_unit=mph` +
+        `&temperature_unit=fahrenheit` +
+        `&precipitation_unit=inch`;
 
       const response = await fetch(forecastApi);
 
@@ -142,11 +141,13 @@ export default function MainPage() {
 
       const data = await response.json();
 
-    const dailyWeatherArray = 
-      data.daily.time.map((day, index) => {
-        const dayName = new Date(`${day}T12:00:00`).toLocaleDateString('en-US', {weekday: 'long'});
+      const dailyWeatherArray = data.daily.time.map((day, index) => {
+        const dayName = new Date(`${day}T12:00:00`).toLocaleDateString(
+          "en-US",
+          { weekday: "long" },
+        );
 
-        return{
+        return {
           id: dayName,
           day: dayName,
           tempMax: data?.daily?.temperature_2m_max[index],
@@ -155,9 +156,10 @@ export default function MainPage() {
           precipitationSum: data?.daily?.precipitation_sum[index],
           rainSum: data?.daily?.rain_sum[index],
           snowSum: data?.daily?.snowfall_sum[index],
-          precipitationProbability: data?.daily?.precipitation_probability_max[index],
-      }
-      })
+          precipitationProbability:
+            data?.daily?.precipitation_probability_max[index],
+        };
+      });
       setDailyWeatherData(dailyWeatherArray);
       setSearchResults([]);
     } catch (error) {
@@ -165,17 +167,16 @@ export default function MainPage() {
     }
   }
 
-
   function handleLocationSelection(latitude, longitude) {
     fetchCurrentWeatherData(latitude, longitude);
     fetchHourlyData(latitude, longitude);
-    fetchDailyWeatherData(latitude, longitude)
+    fetchDailyWeatherData(latitude, longitude);
     setInputLocationName("");
   }
 
   useEffect(() => {
-    console.log(dailyWeatherData)
-  }, [dailyWeatherData])
+    console.log(dailyWeatherData);
+  }, [dailyWeatherData]);
 
   useEffect(() => {
     fetchCurrentWeatherData(
@@ -183,10 +184,7 @@ export default function MainPage() {
       DEFAULT_LOCATION.longitude,
     );
 
-    fetchHourlyData(
-      DEFAULT_LOCATION.latitude,
-      DEFAULT_LOCATION.longitude,
-    );
+    fetchHourlyData(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
 
     fetchDailyWeatherData(
       DEFAULT_LOCATION.latitude,
@@ -227,7 +225,7 @@ export default function MainPage() {
   }, [inputLocationName, geoApi]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center py-4">
+    <main className="flex min-h-screen items-center justify-center py-4 bg-background-image">
       <div className="grid min-h-[80vh] gap-4 rounded-xl bg-background-image py-6 px-4 text-[var(--text-primary)] lg:grid-cols-[1.2fr_1.8fr]">
         <div className="relative min-w-0 flex flex-col h-full gap-6 rounded-md text-[var(--text-color)]">
           <form onSubmit={(event) => event.preventDefault()}>
@@ -248,10 +246,7 @@ export default function MainPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleLocationSelection(
-                      result.latitude,
-                      result.longitude,
-                    )
+                    handleLocationSelection(result.latitude, result.longitude)
                   }
                   key={`${result.latitude}-${result.longitude}`}
                   className="block w-full py-1 text-left text-lg text-black"
@@ -266,7 +261,7 @@ export default function MainPage() {
 
         <div className="flex flex-col gap-4 min-w-0 lg:mt-14">
           <HourlyForecast hourlyWeatherData={hourlyWeatherData} />
-          <SevenDayForecast dailyWeatherData={dailyWeatherData}/>
+          <SevenDayForecast dailyWeatherData={dailyWeatherData} />
         </div>
       </div>
     </main>
