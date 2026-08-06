@@ -15,7 +15,7 @@ export default function SevenDayForecast({ dailyWeatherData }) {
       <h1 className="mb-4 text-2xl">Seven Day Forecast</h1>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {dailyWeatherData.map((day) => {
-          const hasRain = day.rainSum > 0;
+          const hasRain = day.rainSum > 0 || day.showerSum > 0;
           const hasSnow = day.snowSum > 0;
           return (
             <div

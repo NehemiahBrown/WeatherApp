@@ -131,7 +131,7 @@ export default function MainPage() {
         `https://api.open-meteo.com/v1/forecast` +
         `?latitude=${latitude}` +
         `&longitude=${longitude}` +
-        `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum,precipitation_hours,precipitation_sum,precipitation_probability_max` +
+        `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum,showers_sum,precipitation_hours,precipitation_sum,precipitation_probability_max` +
         `&timezone=auto` +
         `&wind_speed_unit=mph` +
         `&temperature_unit=fahrenheit` +
@@ -160,6 +160,7 @@ export default function MainPage() {
           precipitationSum: data?.daily?.precipitation_sum[index],
           rainSum: data?.daily?.rain_sum[index],
           snowSum: data?.daily?.snowfall_sum[index],
+          showerSum: data?.daily?.showers_sum[index],
           precipitationProbability:
             data?.daily?.precipitation_probability_max[index],
         };
