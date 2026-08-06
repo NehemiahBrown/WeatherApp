@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import TodaysWeatherCard from "../components/TodaysWeatherCard.jsx";
 import HourlyForecast from "../components/HourlyForecast.jsx";
 import SevenDayForecast from "../components/SevenDayForecast.jsx";
+import { MapPin } from "lucide-react";
 
 export default function MainPage() {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
@@ -10,6 +11,9 @@ export default function MainPage() {
   const [dailyWeatherData, setDailyWeatherData] = useState([]);
   const [inputLocationName, setInputLocationName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(
+    "Carbondale, Illinois",
+  );
 
   const DEFAULT_LOCATION = {
     latitude: 37.71639,
@@ -167,10 +171,16 @@ export default function MainPage() {
     }
   }
 
-  function handleLocationSelection(latitude, longitude) {
-    fetchCurrentWeatherData(latitude, longitude);
-    fetchHourlyData(latitude, longitude);
-    fetchDailyWeatherData(latitude, longitude);
+  function handleLocationSelection(location) {
+    fetchCurrentWeatherData(location.latitude, location.longitude);
+    fetchHourlyData(location.latitude, location.longitude);
+    fetchDailyWeatherData(location.latitude, location.longitude);
+
+    const locationName = location.admin1
+      ? `${location.name}, ${location.admin1}`
+      : location.name;
+
+    setCurrentLocation(locationName);
     setInputLocationName("");
   }
 
@@ -228,13 +238,20 @@ export default function MainPage() {
     <main className="flex min-h-screen items-center justify-center py-4 bg-background-image">
       <div className="grid min-h-[80vh] gap-4 rounded-xl bg-background-image py-6 px-4 text-[var(--text-primary)] lg:grid-cols-[1.2fr_1.8fr]">
         <div className="relative min-w-0 flex flex-col h-full gap-6 rounded-md text-[var(--text-color)]">
-          <form onSubmit={(event) => event.preventDefault()}>
+          <form
+            className="relative"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <MapPin
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
             <input
               value={inputLocationName}
               onChange={handleInputChange}
               type="text"
-              className="h-8 w-full rounded-xl bg-[var(--background-color)] px-3"
-              placeholder="Search a city..."
+              className="pl-12 h-8 w-full rounded-xl bg-[var(--background-color)] px-3"
+              placeholder={currentLocation}
             />
           </form>
 
@@ -245,9 +262,7 @@ export default function MainPage() {
               {searchResults.map((result) => (
                 <button
                   type="button"
-                  onClick={() =>
-                    handleLocationSelection(result.latitude, result.longitude)
-                  }
+                  onClick={() => handleLocationSelection(result)}
                   key={`${result.latitude}-${result.longitude}`}
                   className="block w-full py-1 text-left text-lg text-black"
                 >
