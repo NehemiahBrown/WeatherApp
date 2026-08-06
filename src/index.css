@@ -26,6 +26,10 @@
   --breakpoint-large: 1200px;
 }
 
+html {
+  background-color: #28351f;
+}
+
 html,
 body {
   margin: 0;
