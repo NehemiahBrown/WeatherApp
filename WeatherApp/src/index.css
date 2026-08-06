@@ -21,12 +21,46 @@
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
+@theme{
+  --breakpoint-small: 380px;
+  --breakpoint-large: 1200px;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--background-color);
+  }
+}
+
+::-webkit-scrollbar{
+  height: 8px;
+  width: 8px;
   
+}
+
+::-webkit-scrollbar-button{
+  width: 0; 
+  height: 0;
+}
+
+
+::-webkit-scrollbar-track{
+  background: var(--background-color);
+  border-radius: 4px;
+  
+}
+
+::-webkit-scrollbar-thumb{
+background: var(--secondary-color);
+border-radius: 4px;
 }
 
 body {
@@ -37,10 +71,6 @@ body {
   background-attachment: fixed;
   min-height: 100vh;
   font-family: var(--body-font);
-}
-
-.dashboard {
-  border: solid 5px white;
 }
 
 .heading-font {

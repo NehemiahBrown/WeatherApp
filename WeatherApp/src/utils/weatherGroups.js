@@ -37,45 +37,45 @@ export const weatherStatus = {
 
 const weatherMessages = {
   clear: [
-    "Take a little time to enjoy the sunshine. ☀️",
-    "I hope today gives you a reason to smile. ❤️",
-    "Hope today is as beautiful as you are. ✨",
+    "Take some time to enjoy the sunshine. ☀️",
+    "The sun is competing  with your smile ❤️☀️",
+    "Hope today is as beautiful as you are. ❤️",
   ],
 
   cloudy: [
-    "Be gentle with yourself today. ☁️❤️",
-    "Hope today feels calm and peaceful. ☁️✨",
-    "A cozy day made for blankets and cuddles. 🫂",
+    "Be kind to yourself today. ☁️❤️",
+    "Cloudy days are still good days. Take care of yourself. ☁️❤️",
+    "A cozy day made for blankets and coffee. ☕",
   ],
 
   fog: [
-    "Stay cozy, Dakota. ☕",
-    "Take your time today. 🌫️❤️",
-    "Hope today feels peaceful. 🌫️✨",
+    "Stay cozy, baby ☕",
+    "Take a deep breath. 🌫️❤️",
+    "I hope today feels peaceful. 🌫️✨",
   ],
 
   drizzle: [
     "There’s a quiet beauty in a gentle drizzle. 🌦️✨",
-    "A warm drink sounds nice today. 🌦️☕",
+    "Take a deep breath and enjoy the calm today. 🌦️💙",
     "Take a moment to slow down today. 🌦️❤️",
   ],
 
   rain: [
     "Stay dry today, beautiful. 🌧️❤️",
-    "Hope home feels extra cozy today. 🏡",
-    "Perfect weather for a movie and cuddles. 🎬🍿🫂",
+    "Hope home feels extra peaceful today. 🏡",
+    "Perfect weather for a movie and cuddling. 🎬🍿",
   ],
 
   snow: [
     "Bundle up and stay warm today. ❄️🧥",
-    "Hot chocolate weather has arrived. 🍫☕",
-    "Stay warm, Dakota. I love you. ❄️❤️",
+    "Need a warm body? I'm here ❄️👨🏿‍❤️‍👩🏻",
+    "Stay warm, baby. I love you. ❄️❤️",
   ],
 
   thunder: [
     "Stay safe and cozy today. ⛈️❤️",
-    "The storm will pass. Take care of yourself. 🫂",
-    "Perfect weather to stay home and relax. 🏡",
+    "The storm will pass. Take care of yourself. ⛈️❤️",
+    "Try to stay inside today love. 🏡",
   ],
 };
 

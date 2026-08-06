@@ -7,6 +7,7 @@ import SevenDayForecast from "../components/SevenDayForecast.jsx";
 export default function MainPage() {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
+  const [dailyWeatherData, setDailyWeatherData] = useState([]);
   const [inputLocationName, setInputLocationName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -109,8 +110,7 @@ export default function MainPage() {
             humidity: data?.hourly?.relative_humidity_2m[index],
             weather: data?.hourly?.weather_code[index],
             precipitation: data?.hourly?.precipitation[index],
-            precipitationProbability:
-              data?.hourly?.precipitation_probability[index],
+            precipitationProbability: data?.hourly?.precipitation_probability[index],
           };
         })
         .slice(0, 24);
@@ -122,11 +122,60 @@ export default function MainPage() {
     }
   }
 
+  async function fetchDailyWeatherData(latitude, longitude) {
+    try {
+      const forecastApi =
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${latitude}` +
+      `&longitude=${longitude}`+
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum,precipitation_hours,precipitation_sum,precipitation_probability_max` +
+      `&timezone=auto`+
+      `&wind_speed_unit=mph`+
+      `&temperature_unit=fahrenheit`+
+      `&precipitation_unit=inch`
+
+      const response = await fetch(forecastApi);
+
+      if (!response.ok) {
+        throw new Error(`Current-weather request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+    const dailyWeatherArray = 
+      data.daily.time.map((day, index) => {
+        const dayName = new Date(`${day}T12:00:00`).toLocaleDateString('en-US', {weekday: 'long'});
+
+        return{
+          id: dayName,
+          day: dayName,
+          tempMax: data?.daily?.temperature_2m_max[index],
+          tempMin: data?.daily?.temperature_2m_min[index],
+          weather: data?.daily?.weather_code[index],
+          precipitationSum: data?.daily?.precipitation_sum[index],
+          rainSum: data?.daily?.rain_sum[index],
+          snowSum: data?.daily?.snowfall_sum[index],
+          precipitationProbability: data?.daily?.precipitation_probability_max[index],
+      }
+      })
+      setDailyWeatherData(dailyWeatherArray);
+      setSearchResults([]);
+    } catch (error) {
+      console.log("Error fetching current weather:", error.message);
+    }
+  }
+
+
   function handleLocationSelection(latitude, longitude) {
     fetchCurrentWeatherData(latitude, longitude);
     fetchHourlyData(latitude, longitude);
+    fetchDailyWeatherData(latitude, longitude)
     setInputLocationName("");
   }
+
+  useEffect(() => {
+    console.log(dailyWeatherData)
+  }, [dailyWeatherData])
 
   useEffect(() => {
     fetchCurrentWeatherData(
@@ -135,6 +184,11 @@ export default function MainPage() {
     );
 
     fetchHourlyData(
+      DEFAULT_LOCATION.latitude,
+      DEFAULT_LOCATION.longitude,
+    );
+
+    fetchDailyWeatherData(
       DEFAULT_LOCATION.latitude,
       DEFAULT_LOCATION.longitude,
     );
@@ -174,8 +228,8 @@ export default function MainPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center py-4">
-      <div className="dashboard grid min-h-[80vh] w-[92%] gap-4 rounded-xl bg-background-image p-6 text-[var(--text-primary)] lg:grid-cols-[1.2fr_1.8fr]">
-        <div className="relative flex h-full flex-col gap-6 rounded-md text-[var(--text-color)]">
+      <div className="grid min-h-[80vh] gap-4 rounded-xl bg-background-image py-6 px-4 text-[var(--text-primary)] lg:grid-cols-[1.2fr_1.8fr]">
+        <div className="relative min-w-0 flex flex-col h-full gap-6 rounded-md text-[var(--text-color)]">
           <form onSubmit={(event) => event.preventDefault()}>
             <input
               value={inputLocationName}
@@ -210,9 +264,9 @@ export default function MainPage() {
           )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 min-w-0 lg:mt-14">
           <HourlyForecast hourlyWeatherData={hourlyWeatherData} />
-          <SevenDayForecast />
+          <SevenDayForecast dailyWeatherData={dailyWeatherData}/>
         </div>
       </div>
     </main>

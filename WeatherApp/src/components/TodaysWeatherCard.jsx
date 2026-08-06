@@ -38,7 +38,7 @@ export default function TodaysWeatherCard({ currentWeatherData }) {
         </p>
       </div>
 
-      <div className="grid w-full grid-cols-1 gap-6 px-4 small:grid-cols-2 medium:grid-cols-1 large:grid-cols-2">
+      <div className="grid w-full max-w-[750px] mx-auto grid-cols-1 gap-6 px-4 small:grid-cols-2 medium:grid-cols-1 large:grid-cols-2">
         <div className="w-full rounded-md border border-[var(--card-background)] bg-[var(--subCard-background)] px-2 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-[18px]">
           <div className="flex items-center gap-2 text-sm">
             <Thermometer size={16} />

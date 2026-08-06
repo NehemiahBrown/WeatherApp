@@ -1,6 +1,13 @@
 import { getWeatherEmoji } from "../utils/weatherGroups.js";
 
-export default function HourlyForecast({ hourlyWeatherData = [] }) {
+export default function HourlyForecast({ hourlyWeatherData }) {
+  if (!hourlyWeatherData) {
+    return (
+      <div className="flex flex-1 items-center justify-center border-2 border-[var(--border)] bg-[var(--card-background)] text-[var(--text-color)] backdrop-blur-[18px]">
+        Loading hourly forecast...
+      </div>
+    );
+  }
   return (
     <section className="border-2 border-[var(--border)] bg-[var(--card-background)] p-4 text-[var(--text-color)] backdrop-blur-[18px]">
       <h2 className="mb-4 text-2xl">Hourly Forecast</h2>
