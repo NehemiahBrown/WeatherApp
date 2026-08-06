@@ -3,14 +3,14 @@
 :root {
   --body-font: "Roboto", sans-serif;
   --card-background: rgba(255, 255, 255, 0.08);
-  --subCard-background: rgba(23,24,29,0.7);
+  --subCard-background: rgba(23, 24, 29, 0.7);
 
   --primary-color: #302c1e;
   --secondary-color: #a3a6a2;
   --text-color: #c6c7bd;
   --background-color: #3a3d3a;
 
-  --border: rgba(255,255,255, 0.22);
+  --border: rgba(255, 255, 255, 0.22);
   --border-hover: rgba(255, 255, 255, 0.12);
 
   --text-primary: #f5f5f7;
@@ -21,7 +21,7 @@
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
-@theme{
+@theme {
   --breakpoint-small: 380px;
   --breakpoint-large: 1200px;
 }
@@ -30,6 +30,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
   box-sizing: border-box;
 }
 
@@ -40,35 +41,32 @@ body {
   }
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   height: 8px;
   width: 8px;
-  
 }
 
-::-webkit-scrollbar-button{
-  width: 0; 
+::-webkit-scrollbar-button {
+  width: 0;
   height: 0;
 }
 
-
-::-webkit-scrollbar-track{
+::-webkit-scrollbar-track {
   background: var(--background-color);
   border-radius: 4px;
-  
 }
 
-::-webkit-scrollbar-thumb{
-background: var(--secondary-color);
-border-radius: 4px;
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
 }
 
 body {
+  min-height: 100dvh;
   background-image: url("./assets/backgroundImage.avif");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 100vh;
   font-family: var(--body-font);
 }
